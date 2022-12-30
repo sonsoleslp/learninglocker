@@ -43,7 +43,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
         }
 
         console.log("anonymize")
-        console.log({statement,statementForwarding})
+        console.log({statement,statementForwarding, actor: statement.statement.actor})
 
         queue.publish({
           queueName,
