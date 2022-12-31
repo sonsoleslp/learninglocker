@@ -53,7 +53,7 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     'statement.context.registration'];
   fieldsToAnonymize.forEach(field => {
     const personalInformation = resolvePath(xAPIStatement,field);
-    console.log(xAPIStatement)
+    console.log({field,personalInformation})
     if (personalInformation) {
       const pseudonym = generatePseudonym(personalInformation);
       setPath(xAPIStatement,field,pseudonym);
