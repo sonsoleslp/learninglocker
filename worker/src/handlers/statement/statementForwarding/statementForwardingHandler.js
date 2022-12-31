@@ -39,7 +39,7 @@ const generatePseudonym = (personalInformation) => {
   }
 }
 
-const pseudonymizeXAPIStatement(xAPIStatement) => {
+const pseudonymizeXAPIStatement = (xAPIStatement) => {
   const fieldsToAnonymize = [
     'statement.actor.mbox', 
     'statement.actor.mbox_sha1sum', 
