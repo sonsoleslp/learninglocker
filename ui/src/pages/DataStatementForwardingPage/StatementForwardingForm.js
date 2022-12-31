@@ -391,19 +391,8 @@ class StatementForwardingForm extends React.Component {
                   label: buildDefaultOptionLabel(orgTimezone),
                   value: orgTimezone,
                 }} />
-            </div>
+            </div> 
             <div className="form-group">
-              <label htmlFor="StatementForward_Pseudonimize">Pseudonymize staments?</label>
-              <TimezoneSelector
-                id="StatementForward_TimezoneSelector"
-                value={model.get('timezone', organisationModel.get('timezone', 'UTC'))}
-                onChange={onChangeTimezone}
-                defaultOption={{
-                  label: buildDefaultOptionLabel(orgTimezone),
-                  value: orgTimezone,
-                }} />
-            </div>
-              <div className="form-group">
               <label htmlFor={`${model.get('_id')}pseudonymize`}>Pseudonymize staments?</label>
               <span className="help-block">Should the statements be pseudonymized before being sent?</span>
               <Switch

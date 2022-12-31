@@ -95,14 +95,13 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
           return resolve();
         }
 
-        
-
-
+        const statementSent = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
+        console.log(JSON.stringify(statementSent, null, 4));
         queue.publish({
           queueName,
           payload: {
             status: queueName,
-            statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement,
+            statment: statementSent,
             statementForwarding
           }
         }, (err) => {
