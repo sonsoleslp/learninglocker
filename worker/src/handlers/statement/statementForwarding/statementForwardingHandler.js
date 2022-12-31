@@ -13,6 +13,59 @@ import mongoFilteringInMemory from 'lib/helpers/mongoFilteringInMemory';
 import parseQuery from 'lib/helpers/parseQuery';
 
 const objectId = mongoose.Types.ObjectId;
+const crypto = require('crypto');
+
+const resolvePath = (object, path, defaultValue) => path
+   .split('.')
+   .reduce((o, p) => o ? o[p] : defaultValue, object)
+
+const setPath = (object, path, value) => path
+   .split('.')
+   .reduce((o,p,i) => o[p] = path.split('.').length === ++i ? value : o[p] || {}, object)   
+
+
+const generatePseudonym = (personalInformation) => {
+    // Hash the personal information using the chosen hash function
+  if (personalInformation && Array.isArray(personalInformation)) {
+    return personalInformation.map(pi => {
+      const hash = crypto.createHash(hashFunction);
+      hash.update(pi);
+      return hash.digest('hex');
+    });
+  } else {
+    const hash = crypto.createHash(hashFunction);
+    hash.update(personalInformation);
+    return hash.digest('hex');
+  }
+}
+
+const pseudonymizeXAPIStatement(xAPIStatement) => {
+  const fieldsToAnonymize = [
+    'statement.actor.mbox', 
+    'statement.actor.mbox_sha1sum', 
+    'statement.actor.account.email', 
+    'statement.actor.account.name', 
+    'statement.actor.account.homePage', 
+    'statement.actor.openid', 
+    'agents', 
+    'relatedAgents', 
+    'registrations',
+    'statement.context.registration'];
+  fieldsToAnonymize.forEach(field => {
+    const personalInformation = resolvePath(xAPIStatement,field);
+    console.log(xAPIStatement)
+    if (personalInformation) {
+      const pseudonym = generatePseudonym(personalInformation);
+      setPath(xAPIStatement,field,pseudonym);
+    }
+  });
+  return xAPIStatement;
+}
+
+
+// Choose a hash function
+const hashFunction = 'sha256';
+
 
 export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, done, {
   queue = Queue
@@ -42,14 +95,14 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
           return resolve();
         }
 
-        console.log("anonymize")
-        console.log({statement,statementForwarding, actor: statement.statement.actor})
+        
+
 
         queue.publish({
           queueName,
           payload: {
             status: queueName,
-            statement,
+            statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement,
             statementForwarding
           }
         }, (err) => {
