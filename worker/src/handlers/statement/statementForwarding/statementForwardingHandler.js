@@ -4,7 +4,7 @@ import {
   STATEMENT_FORWARDING_REQUEST_QUEUE,
 } from 'lib/constants/statements';
 import StatementForwarding from 'lib/models/statementForwarding';
-import { map } from 'lodash';
+import { map, get, set } from 'lodash';
 
 import mongoose from 'mongoose';
 import * as Queue from 'lib/services/queue';
@@ -14,15 +14,6 @@ import parseQuery from 'lib/helpers/parseQuery';
 
 const objectId = mongoose.Types.ObjectId;
 const crypto = require('crypto');
-
-const resolvePath = (object, path, defaultValue) => path
-   .split('.')
-   .reduce((o, p) => o ? o[p] : defaultValue, object)
-
-const setPath = (object, path, value) => path
-   .split('.')
-   .reduce((o,p,i) => o[p] = path.split('.').length === ++i ? value : o[p] || {}, object)   
-
 
 const generatePseudonym = (personalInformation) => {
     // Hash the personal information using the chosen hash function
@@ -52,11 +43,11 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     'registrations',
     'statement.context.registration'];
   fieldsToAnonymize.forEach(field => {
-    const personalInformation = resolvePath(xAPIStatement,field);
+    const personalInformation = get(xAPIStatement, field);
     console.log({field,personalInformation})
     if (personalInformation) {
       const pseudonym = generatePseudonym(personalInformation);
-      setPath(xAPIStatement,field,pseudonym);
+      set(xAPIStatement, field, pseudonym);
     }
   });
   return xAPIStatement;
