@@ -78,6 +78,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
           tokenId: statement.organisation
         }
       };
+
       const parsedQuery = await parseQuery(query, { authInfo });
 
       return new Promise((resolve, reject) => {
@@ -85,7 +86,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
         if (theParsedQuery && !mongoFilteringInMemory(theParsedQuery)(statement)) {
           return resolve();
         }
-
+        console.log("pseudo//////////////////////////////",statementForwarding.pseudonymize)
         const statementSent = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
         console.log(JSON.stringify(statementSent, null, 4));
         queue.publish({
