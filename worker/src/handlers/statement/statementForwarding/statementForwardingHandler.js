@@ -93,7 +93,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
           queueName,
           payload: {
             status: queueName,
-            statment: statementSent,
+            statement: statementSent,
             statementForwarding
           }
         }, (err) => {
