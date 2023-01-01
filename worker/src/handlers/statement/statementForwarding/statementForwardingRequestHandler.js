@@ -140,14 +140,19 @@ const statementForwardingRequestHandler = async (
       statement,
       statementForwarding._id
     );
+    console.log(JSON.stringify(statement, null, 4));
+    console.log("///////////////////////////////");
+
+    const statementPseudo = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
+    console.log(JSON.stringify(statementPseudo, null, 4));
 
     await sendRequest(
-      statementForwarding.fullDocument ? statement : statement.statement,
+      statementForwarding.fullDocument ? statementPseudo : statementPseudo.statement,
       statementForwarding,
-      statement
+      statementPseudo
     );
 
-    await setCompleteStatements(statement, statementForwarding._id);
+    await setCompleteStatements(statementPseudo, statementForwarding._id);
 
     logger.debug(
       `SUCCESS sending statement ${statement._id} to ${statementForwarding.configuration.url}`
@@ -182,11 +187,8 @@ const statementForwardingRequestHandler = async (
         }
       );
 
-      const updatedStatement_pre = await Statement.findOne({ _id: statement._id });
-
-      const updatedStatement = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(updatedStatement_pre) : updatedStatement_pre;
-
-      console.log({updatedStatement})
+      let updatedStatement = await Statement.findOne({ _id: statement._id });
+      updatedStatement = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(updatedStatement) : updatedStatement;
       if (
         updatedStatement.failedForwardingLog.length <=
         statementForwarding.configuration.maxRetries
