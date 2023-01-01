@@ -1,5 +1,5 @@
 import { post } from 'axios';
-import { assign, isPlainObject } from 'lodash';
+import { assign, isPlainObject, get, set } from 'lodash';
 import { PassThrough } from 'stream';
 import highland from 'highland';
 import getAttachments from '@learninglocker/xapi-statements/dist/service/utils/getAttachments';
@@ -16,8 +16,50 @@ import {
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
 import getStatementsRepo from './getStatementsRepo';
+const crypto = require('crypto');
 
 const objectId = mongoose.Types.ObjectId;
+const generatePseudonym = (personalInformation) => {
+    // Hash the personal information using the chosen hash function
+  if (personalInformation && Array.isArray(personalInformation)) {
+    return personalInformation.map(pi => {
+      const hash = crypto.createHash(hashFunction);
+      hash.update(pi);
+      return hash.digest('hex');
+    });
+  } else {
+    const hash = crypto.createHash(hashFunction);
+    hash.update(personalInformation);
+    return hash.digest('hex');
+  }
+}
+
+const pseudonymizeXAPIStatement = (xAPIStatement) => {
+  const fieldsToAnonymize = [
+    'statement.actor.mbox', 
+    'statement.actor.mbox_sha1sum', 
+    'statement.actor.account.email', 
+    'statement.actor.account.name', 
+    'statement.actor.account.homePage', 
+    'statement.actor.openid', 
+    'agents', 
+    'relatedAgents', 
+    'registrations',
+    'statement.context.registration'];
+  fieldsToAnonymize.forEach(field => {
+    const personalInformation = get(xAPIStatement, field);
+    console.log({field,personalInformation})
+    if (personalInformation) {
+      const pseudonym = generatePseudonym(personalInformation);
+      set(xAPIStatement, field, pseudonym);
+    }
+  });
+  return xAPIStatement;
+}
+
+
+// Choose a hash function
+const hashFunction = 'sha256';
 
 const generateHeaders = (statementForwarding, statement) => {
   const statementForwardingModel = new StatementForwarding(statementForwarding);
@@ -140,8 +182,9 @@ const statementForwardingRequestHandler = async (
         }
       );
 
-      const updatedStatement = await Statement.findOne({ _id: statement._id });
+      const updatedStatement_pre = await Statement.findOne({ _id: statement._id });
 
+      const updatedStatement = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(updatedStatement_pre) : updatedStatement_pre;
       if (
         updatedStatement.failedForwardingLog.length <=
         statementForwarding.configuration.maxRetries

@@ -4,7 +4,7 @@ import {
   STATEMENT_FORWARDING_REQUEST_QUEUE,
 } from 'lib/constants/statements';
 import StatementForwarding from 'lib/models/statementForwarding';
-import { map, get, set } from 'lodash';
+import { map } from 'lodash';
 
 import mongoose from 'mongoose';
 import * as Queue from 'lib/services/queue';
@@ -13,49 +13,7 @@ import mongoFilteringInMemory from 'lib/helpers/mongoFilteringInMemory';
 import parseQuery from 'lib/helpers/parseQuery';
 
 const objectId = mongoose.Types.ObjectId;
-const crypto = require('crypto');
 
-const generatePseudonym = (personalInformation) => {
-    // Hash the personal information using the chosen hash function
-  if (personalInformation && Array.isArray(personalInformation)) {
-    return personalInformation.map(pi => {
-      const hash = crypto.createHash(hashFunction);
-      hash.update(pi);
-      return hash.digest('hex');
-    });
-  } else {
-    const hash = crypto.createHash(hashFunction);
-    hash.update(personalInformation);
-    return hash.digest('hex');
-  }
-}
-
-const pseudonymizeXAPIStatement = (xAPIStatement) => {
-  const fieldsToAnonymize = [
-    'statement.actor.mbox', 
-    'statement.actor.mbox_sha1sum', 
-    'statement.actor.account.email', 
-    'statement.actor.account.name', 
-    'statement.actor.account.homePage', 
-    'statement.actor.openid', 
-    'agents', 
-    'relatedAgents', 
-    'registrations',
-    'statement.context.registration'];
-  fieldsToAnonymize.forEach(field => {
-    const personalInformation = get(xAPIStatement, field);
-    console.log({field,personalInformation})
-    if (personalInformation) {
-      const pseudonym = generatePseudonym(personalInformation);
-      set(xAPIStatement, field, pseudonym);
-    }
-  });
-  return xAPIStatement;
-}
-
-
-// Choose a hash function
-const hashFunction = 'sha256';
 
 
 export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, done, {
@@ -86,15 +44,12 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
         if (theParsedQuery && !mongoFilteringInMemory(theParsedQuery)(statement)) {
           return resolve();
         }
-        console.log("pseudo//////////////////////////////",statementForwarding.pseudonymize)
-        const statementSent = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
-        console.log(JSON.stringify(statementSent, null, 4));
-        console.log(JSON.stringify(statementForwarding.fullDocument, null, 4));
+        
         queue.publish({
           queueName,
           payload: {
             status: queueName,
-            statement: statementSent,
+            statement,
             statementForwarding
           }
         }, (err) => {
