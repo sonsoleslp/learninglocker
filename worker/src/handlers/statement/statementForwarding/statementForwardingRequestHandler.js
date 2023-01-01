@@ -185,6 +185,8 @@ const statementForwardingRequestHandler = async (
       const updatedStatement_pre = await Statement.findOne({ _id: statement._id });
 
       const updatedStatement = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(updatedStatement_pre) : updatedStatement_pre;
+
+      console.log({updatedStatement})
       if (
         updatedStatement.failedForwardingLog.length <=
         statementForwarding.configuration.maxRetries
