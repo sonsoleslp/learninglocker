@@ -23,7 +23,11 @@ const generatePseudonym = (personalInformation) => {
   // Hash the personal information using the chosen hash function
   const hash = crypto.createHash(hashFunction);
   hash.update(personalInformation);
-  return hash.digest('hex');
+  let result =  hash.digest('hex');
+  if(typeof personalInformation == "string" & personalInformation.match("mailto")) {
+    result = "mailto:" + result + "@anonymous.org";
+  }
+  return result;
   
 }
 
@@ -44,16 +48,16 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     try {
     const personalInformation = get(xAPIStatement, field);
     if (personalInformation) {
-      let pseudonym = generatePseudonym(personalInformation);
       if (personalInformation && Array.isArray(personalInformation)) {
-        pseudonym =  personalInformation.map(pi => {
+        let pseudonym =  personalInformation.map(pi => {
           return generatePseudonym(pi);
         });
-      } 
-      if(typeof personalInformation == "string" & personalInformation.match("mailto")) {
-        pseudonym = "mailto:" + pseudonym + "@anonymous.org";
+        set(xAPIStatement, field, pseudonym);
+      } else {
+        let pseudonym = generatePseudonym(personalInformation);
+        set(xAPIStatement, field, pseudonym);
       }
-      set(xAPIStatement, field, pseudonym);
+      
     }
   } catch(ep){console.error(ep)}
   });
