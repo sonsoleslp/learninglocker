@@ -20,18 +20,11 @@ const crypto = require('crypto');
 
 const objectId = mongoose.Types.ObjectId;
 const generatePseudonym = (personalInformation) => {
-    // Hash the personal information using the chosen hash function
-  if (personalInformation && Array.isArray(personalInformation)) {
-    return personalInformation.map(pi => {
-      const hash = crypto.createHash(hashFunction);
-      hash.update(pi);
-      return hash.digest('hex');
-    });
-  } else {
-    const hash = crypto.createHash(hashFunction);
-    hash.update(personalInformation);
-    return hash.digest('hex');
-  }
+  // Hash the personal information using the chosen hash function
+  const hash = crypto.createHash(hashFunction);
+  hash.update(personalInformation);
+  return hash.digest('hex');
+  
 }
 
 const pseudonymizeXAPIStatement = (xAPIStatement) => {
@@ -42,17 +35,27 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     'statement.actor.account.name', 
     'statement.actor.account.homePage', 
     'statement.actor.openid', 
+    'person.display', 
     'agents', 
     'relatedAgents', 
     'registrations',
     'statement.context.registration'];
   fieldsToAnonymize.forEach(field => {
+    try {
     const personalInformation = get(xAPIStatement, field);
-    console.log({field,personalInformation})
     if (personalInformation) {
-      const pseudonym = generatePseudonym(personalInformation);
+      let pseudonym = generatePseudonym(personalInformation);
+      if (personalInformation && Array.isArray(personalInformation)) {
+        pseudonym =  personalInformation.map(pi => {
+          return generatePseudonym(pi);
+        });
+      } 
+      if(typeof personalInformation == "string" & personalInformation.match("mailto")) {
+        pseudonym = "mailto:" + pseudonym + "@anonymous.org";
+      }
       set(xAPIStatement, field, pseudonym);
     }
+  } catch(ep){console.error(ep)}
   });
   return xAPIStatement;
 }
