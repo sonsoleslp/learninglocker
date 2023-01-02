@@ -24,7 +24,7 @@ const generatePseudonym = (personalInformation) => {
   const hash = crypto.createHash(hashFunction);
   hash.update(personalInformation);
   let result =  hash.digest('hex');
-  if(typeof personalInformation == "string" & personalInformation.match("mailto")) {
+  if ((typeof personalInformation == "string") && !!(personalInformation.match("mailto"))) {
     result = "mailto:" + result + "@anonymous.org";
   }
   return result;
