@@ -1,6 +1,9 @@
 import { get, set } from 'lodash';
-
 const crypto = require('crypto');
+// Choose a hash function
+const hashFunction = 'sha256';
+
+
 const fieldsToAnonymize = [
   'statement.actor.mbox', 
   'statement.actor.mbox_sha1sum', 
@@ -13,8 +16,10 @@ const fieldsToAnonymize = [
   'agents', 
   'relatedAgents', 
   'registrations',
+  'person.display',
   'statement.context.registration'
 ];
+
 
 
 const generatePseudonym = (personalInformation) => {
@@ -30,11 +35,9 @@ const generatePseudonym = (personalInformation) => {
   
 }
 
-// Choose a hash function
-const hashFunction = 'sha256';
+
 
 const pseudonymizeXAPIStatement = (xAPIStatement) => {
-
   fieldsToAnonymize.forEach(field => {
     try {
       const personalInformation = get(xAPIStatement, field);
@@ -48,15 +51,13 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
           let pseudonym = generatePseudonym(personalInformation);
           set(xAPIStatement, field, pseudonym);
         }
-        
       }
-    } catch(ep){
-      console.error(ep);
+    } catch(pseudonym_error){
+      logger.error("Error pseudonymizing:" ,pseudonym_error);
+      return null;
     }
   });
   return xAPIStatement;
 }
-
-
 
 export default pseudonymizeXAPIStatement;

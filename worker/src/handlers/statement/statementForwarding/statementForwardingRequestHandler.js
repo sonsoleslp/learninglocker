@@ -99,11 +99,10 @@ const statementForwardingRequestHandler = async (
       statement,
       statementForwarding._id
     );
-    console.log(JSON.stringify(statement, null, 4));
-    console.log("///////////////////////////////");
 
     const statementPseudo = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
-    console.log(JSON.stringify(statementPseudo, null, 4));
+    logger.debug("Attempting to send the following statement: ");
+    logger.debug(JSON.stringify(statementPseudo, null, 4));
 
     await sendRequest(
       statementForwarding.fullDocument ? statementPseudo : statementPseudo.statement,
@@ -123,6 +122,7 @@ const statementForwardingRequestHandler = async (
       `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
       err
     );
+    console.log(err)
 
     let update = {
       timestamp: new Date(),
