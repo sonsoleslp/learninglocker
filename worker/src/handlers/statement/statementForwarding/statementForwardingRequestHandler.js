@@ -22,7 +22,7 @@ const objectId = mongoose.Types.ObjectId;
 const generatePseudonym = (personalInformation, field) => {
   // Hash the personal information using the chosen hash function
   if (field === 'person.display') {
-    return "anonymous";
+    return "mailto:anonymous@anonymous.org";
   }
   const hash = crypto.createHash(hashFunction);
   hash.update(personalInformation);
