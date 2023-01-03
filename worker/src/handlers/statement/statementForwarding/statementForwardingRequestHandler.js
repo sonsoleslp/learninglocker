@@ -19,11 +19,8 @@ import getStatementsRepo from './getStatementsRepo';
 const crypto = require('crypto');
 
 const objectId = mongoose.Types.ObjectId;
-const generatePseudonym = (personalInformation, field) => {
+const generatePseudonym = (personalInformation) => {
   // Hash the personal information using the chosen hash function
-  if (field === 'person.display') {
-    return "mailto:anonymous@anonymous.org";
-  }
   const hash = crypto.createHash(hashFunction);
   hash.update(personalInformation);
   let result =  hash.digest('hex');
@@ -45,7 +42,6 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     'statement.actor.openid', 
     'statement.actor.name', 
     'statement.actor.member', 
-    'person.display', 
     'agents', 
     'relatedAgents', 
     'registrations',
@@ -56,11 +52,11 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
     if (personalInformation) {
       if (personalInformation && Array.isArray(personalInformation)) {
         let pseudonym =  personalInformation.map(pi => {
-          return generatePseudonym(pi, field);
+          return generatePseudonym(pi);
         });
         set(xAPIStatement, field, pseudonym);
       } else {
-        let pseudonym = generatePseudonym(personalInformation, field);
+        let pseudonym = generatePseudonym(personalInformation);
         set(xAPIStatement, field, pseudonym);
       }
       
