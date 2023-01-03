@@ -20,6 +20,7 @@ import {
   TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 import { update$dteTimezone } from 'lib/helpers/update$dteTimezone';
 import { periodToDate } from 'ui/utils/dates';
@@ -73,6 +74,7 @@ export default memoize((args = new Map()) => {
     case TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS:
     case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
+    case TEMPLATE_TIME_SPENT:
       return aggregateChart(preReqs, axes, timezone);
     case XVSY:
     case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:

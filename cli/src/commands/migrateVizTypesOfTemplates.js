@@ -13,6 +13,7 @@ import {
   TEMPLATE_MOST_POPULAR_VERBS,
   TEMPLATE_WEEKDAYS_ACTIVITY,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 
 // Define visualisation model
@@ -61,6 +62,9 @@ export const removeTemplateIdAndTemplateStage = async () => {
               break;
             case '7':
               visualisation.type = TEMPLATE_LEARNING_EXPERIENCE_TYPE;
+              break;
+            case '8':
+              visualisation.type = TEMPLATE_TIME_SPENT;
               break;
             default:
               throw new Error(`templateId ${visualisation.templateId} is invalid`);
@@ -121,6 +125,10 @@ export const addTemplateIdAndTemplateStage = async () => {
             visualisation.templateId = '7';
             visualisation.templateStage = 'completed';
             break;
+          case TEMPLATE_TIME_SPENT:
+            visualisation.type = LEADERBOARD;
+            visualisation.templateId = '8';
+            visualisation.templateStage = 'completed';
           default:
             visualisation.templateId = undefined;
             visualisation.templateStage = undefined;
