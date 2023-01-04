@@ -13,6 +13,7 @@ import TemplateStreamUserEngagementLeaderboardCard from 'ui/containers/Visualisa
 import TemplateStreamProportionOfSocialInteractionsCard from 'ui/containers/Visualisations/TemplateStreamProportionOfSocialInteractions/Card';
 import TemplateStreamActivitiesWithMostCommentsCard from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments/Card';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType/Card';
+import TemplateTimeSpentCard from 'ui/containers/Visualisations/TemplateTimeSpent/Card';
 
 const TemplateCardList = ({ model, saveModel }) => (
   <CardList id="new-visualisation-templates">
@@ -65,6 +66,10 @@ const TemplateCardList = ({ model, saveModel }) => (
       saveModel={saveModel} />
 
     <TemplateStreamActivitiesWithMostCommentsCard
+      model={model}
+      saveModel={saveModel} />
+    
+    <TemplateTimeSpentCard
       model={model}
       saveModel={saveModel} />
   </CardList>
