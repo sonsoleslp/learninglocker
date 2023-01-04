@@ -14,6 +14,7 @@ import uniqueStatementModifierGrouper from './uniqueStatementModifierGrouper';
 import uniqueTotalGrouper from './uniqueTotalGrouper';
 import uniqueTotalStatementGrouper from './uniqueTotalStatementGrouper';
 import valueGrouper from './valueGrouper';
+import timeSpentGrouper from "./timeSpentGrouper";
 
 const getGroupPipeline = ({ operatorType, groupType, valueOpCase, projections, timezone }) => {
   switch (valueOpCase) {
@@ -27,6 +28,8 @@ const getGroupPipeline = ({ operatorType, groupType, valueOpCase, projections, t
       return uniqueStatementModifierGrouper({ operator: getOperator(operatorType), groupType, projections, timezone });
     case VALUE_OP_CASE.uniqueModifier:
       return uniqueModifierGrouper({ operator: getOperator(operatorType), groupType, projections, timezone });
+    case VALUE_OP_CASE.timeSpent:
+      return timeSpentGrouper({ projections });
     default:
       return [];
   }
@@ -59,6 +62,12 @@ const getProjections = ({ valueType, groupType, valueOpCase, timezone }) => {
         group: group(groupType, timezone),
         model: model(groupType, timezone),
       };
+    case VALUE_OP_CASE.timeSpent:
+      return {
+        group: group(groupType, timezone),
+        timestamp: "$statement.timestamp",
+        model: model(groupType, timezone),
+      };
     default:
       return {};
   }
@@ -73,6 +82,7 @@ const getExistsMatch = ({ valueType, groupType, valueOpCase }) => {
       // groupType should always be timestamp (which always exists).
       return keyExists(valueType);
     case VALUE_OP_CASE.uniqueStatementCount:
+    case VALUE_OP_CASE.timeSpent:
       return keyExists(groupType);
     case VALUE_OP_CASE.uniqueStatementModifier:
     default:
