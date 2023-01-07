@@ -122,7 +122,6 @@ const statementForwardingRequestHandler = async (
       `FAILED sending statement ${statement._id} to ${statementForwarding.configuration.url}`,
       err
     );
-    console.log(err)
 
     let update = {
       timestamp: new Date(),

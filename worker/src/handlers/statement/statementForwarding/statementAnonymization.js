@@ -16,7 +16,7 @@ const fieldsToAnonymize = [
   'agents', 
   'relatedAgents', 
   'registrations',
-  'person.display',
+  //'person.display',
   'statement.context.registration'
 ];
 
@@ -57,6 +57,8 @@ const pseudonymizeXAPIStatement = (xAPIStatement) => {
       return null;
     }
   });
+  console.log(JSON.stringify(xAPIStatement, null, 4));
+
   return xAPIStatement;
 }
 
