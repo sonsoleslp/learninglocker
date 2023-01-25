@@ -19,6 +19,7 @@ import {
   TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 import CustomBarChart from 'ui/containers/Visualisations/CustomBarChart';
 import CustomColumnChart from 'ui/containers/Visualisations/CustomColumnChart';
@@ -40,6 +41,7 @@ import TemplateStreamProportionOfSocialInteractions from 'ui/containers/Visualis
 import TemplateStreamActivitiesWithMostComments from 'ui/containers/Visualisations/TemplateStreamActivitiesWithMostComments';
 import TemplateLearningExperienceType from 'ui/containers/Visualisations/TemplateLearningExperienceType';
 import NewVisualisation from './NewVisualisation';
+import TemplateTimeSpent from 'ui/containers/Visualisations/TemplateTimeSpent';
 
 const VisualiseForm = ({ model, orgTimezone }) => {
   if (model.has('type')) {
@@ -82,6 +84,8 @@ const VisualiseForm = ({ model, orgTimezone }) => {
         return <TemplateStreamActivitiesWithMostComments model={model} orgTimezone={orgTimezone} />;
       case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
         return <TemplateLearningExperienceType model={model} orgTimezone={orgTimezone} />;
+      case TEMPLATE_TIME_SPENT:
+         return <TemplateTimeSpent model={model} orgTimezone={orgTimezone} />;
       default:
         console.error(`VisualiseForm/index.js does not support type ${model.get('type')}`);
         return `type "${model.get('type')}" is not supported.`;

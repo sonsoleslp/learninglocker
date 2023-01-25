@@ -22,6 +22,7 @@ import {
   TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 import { withModel } from 'ui/utils/hocs';
 import CustomBarChartViewer from './CustomBarChart/Viewer';
@@ -43,6 +44,7 @@ import TemplateStreamUserEngagementLeaderboard from './TemplateStreamUserEngagem
 import TemplateStreamProportionOfSocialInteractions from './TemplateStreamProportionOfSocialInteractions/Viewer';
 import TemplateStreamActivitiesWithMostComments from './TemplateStreamActivitiesWithMostComments/Viewer';
 import TemplateLearningExperienceType from './TemplateLearningExperienceType/Viewer';
+import TemplateTimeSpent from './TemplateTimeSpent/Viewer';
 
 /**
  * @param {immutable.Map} model - visualisation model
@@ -97,6 +99,8 @@ const VisualisationViewer = ({
       return <TemplateStreamActivitiesWithMostComments visualisationId={visualisationId} showSourceView={showSourceView} />;
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return <TemplateLearningExperienceType visualisationId={visualisationId} showSourceView={showSourceView} />;
+    case TEMPLATE_TIME_SPENT:
+      return <TemplateTimeSpent visualisationId={visualisationId} showSourceView={showSourceView} />;
     default:
       console.error(`VisualisationViewer.js does not support type "${type}"`);
       return `Type "${type}" is not supported`;

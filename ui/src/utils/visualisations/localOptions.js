@@ -19,6 +19,7 @@ import {
   TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 
 const createOptionModel = (searchString, optionKey) => new Map({ optionKey, searchString });
@@ -29,6 +30,11 @@ export const UNIQUENESS_OPS = [
   'uniqueCount', 'uniqueAverage', 'uniqueMax', 'uniqueMin'
 ];
 
+export const TIME_OPS = ['timeSpent'];
+
+const TIME_OPERATOR_OPTS = new OrderedMap({
+  timeSpent: 'Total time spent',
+});
 
 const LINE_OPERATOR_OPTS = new OrderedMap({
   uniqueCount: 'Total unique number of',
@@ -42,7 +48,7 @@ export const OPERATOR_OPTS = LINE_OPERATOR_OPTS.concat(new OrderedMap({
   uniqueAverage: 'Average unique number of',
   uniqueMax: 'Max unique number of',
   uniqueMin: 'Min unique number of',
-}));
+})).concat(TIME_OPERATOR_OPTS);
 
 export const VALUE_OPTS = createOptionModels({
   scaled: 'Scaled results',
@@ -50,13 +56,15 @@ export const VALUE_OPTS = createOptionModels({
   steps: 'Steps',
 });
 
+export const TIME_VALUE_OPTS = createOptionModels({ statements: "Statements" });
+
 export const UNIQUENESS_VALUE_OPTS = createOptionModels({
   statements: 'Statements',
   people: 'People',
   activities: 'Activities',
   verb: 'Verbs',
   type: 'Activity types',
-}).concat(VALUE_OPTS);
+}).concat(VALUE_OPTS).concat(TIME_VALUE_OPTS);
 
 export const GROUP_OPTS = createOptionModels({
   date: 'Date',
@@ -95,6 +103,8 @@ export const getTypeOpts = (type) => {
     case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
       return OPERATOR_OPTS;
+    case TEMPLATE_TIME_SPENT:
+      return TIME_OPERATOR_OPTS;
     default:
       return new OrderedMap();
   }

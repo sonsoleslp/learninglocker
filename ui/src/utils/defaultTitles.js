@@ -20,6 +20,7 @@ import {
   TEMPLATE_STREAM_PROPORTION_OF_SOCIAL_INTERACTIONS,
   TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS,
   TEMPLATE_LEARNING_EXPERIENCE_TYPE,
+  TEMPLATE_TIME_SPENT,
 } from 'lib/constants/visualise';
 import VisualiseIcon from 'ui/components/VisualiseIcon';
 import { OPERATOR_OPTS } from 'ui/utils/visualisations/localOptions';
@@ -85,6 +86,7 @@ export const createDefaultTitle = (model) => {
     case TEMPLATE_LEARNING_EXPERIENCE_TYPE:
     case TEMPLATE_STREAM_USER_ENGAGEMENT_LEADERBOARD:
     case TEMPLATE_STREAM_ACTIVITIES_WITH_MOST_COMMENTS:
+    case TEMPLATE_TIME_SPENT:
       return addYX(select(axg), select(axv) || select(ayV) || 'Time');
     case XVSY:
     case TEMPLATE_STREAM_INTERACTIONS_VS_ENGAGEMENT:

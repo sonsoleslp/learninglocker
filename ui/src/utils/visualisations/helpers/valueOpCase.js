@@ -5,6 +5,7 @@ export const VALUE_OP_CASE = {
   uniqueCount: 3,
   uniqueModifier: 4,
   uniqueStatementModifier: 5,
+  timeSpent: 6,
 };
 
 export const getValueOpCase = ({
@@ -30,6 +31,8 @@ export const getValueOpCase = ({
         VALUE_OP_CASE.uniqueStatementModifier :
         VALUE_OP_CASE.uniqueModifier
       );
+    case 'timeSpent':
+      return VALUE_OP_CASE.timeSpent;
     default: return VALUE_OP_CASE.other;
   }
 };

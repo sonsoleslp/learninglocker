@@ -6,8 +6,10 @@ import CacheKeysAutoComplete from 'ui/containers/CacheKeysAutoComplete';
 import {
   getTypeOpts,
   UNIQUENESS_OPS,
+  TIME_OPS,
   VALUE_OPTS,
   UNIQUENESS_VALUE_OPTS,
+  TIME_VALUE_OPTS,
 } from 'ui/utils/visualisations/localOptions';
 
 export default class CountEditor extends Component {
@@ -42,6 +44,9 @@ export default class CountEditor extends Component {
   isUniquenessOp = op =>
     this.includes(op)(UNIQUENESS_OPS)
 
+  isTimeOp = (op) =>
+    this.includes(op)(TIME_OPS)
+
   getOperatorOptions = () =>
     getTypeOpts(this.props.type).filter(this.includes(this.state.operatorInput))
 
@@ -52,6 +57,7 @@ export default class CountEditor extends Component {
     const { operator, value } = this.props;
     const operatorOptions = this.getOperatorOptions();
     const hasUniquenessOp = this.isUniquenessOp(operator);
+    const hasTimeOp = this.isTimeOp(operator);
 
     return (
       <div>
@@ -65,7 +71,7 @@ export default class CountEditor extends Component {
           onChange={this.changeOperator} />
         <CacheKeysAutoComplete
           selectedOption={value}
-          localOptions={hasUniquenessOp ? UNIQUENESS_VALUE_OPTS : VALUE_OPTS}
+          localOptions={hasTimeOp ? TIME_VALUE_OPTS : hasUniquenessOp ? UNIQUENESS_VALUE_OPTS : VALUE_OPTS}
           filter={new Map(hasUniquenessOp ? {} : {
             valueType: new Map({ $eq: 'Number' })
           })}
