@@ -32,7 +32,7 @@ export default ({ projections = {} }) => [
   },
   {
     $addFields: {
-      timespent: {
+      count: {
         $sum: {
           $reduce: {
             input: {
@@ -111,21 +111,6 @@ export default ({ projections = {} }) => [
           },
         },
       },
-    },
-  },
-  {
-    $group: {
-      _id: "$_id",
-      count: {
-        $sum: "$timespent",
-      },
-      ...firstValuesOf(projections),
-    },
-  },
-  {
-    $project: {
-      timestamps: 0,
-      timestamp: 0,
     },
   },
 ];
