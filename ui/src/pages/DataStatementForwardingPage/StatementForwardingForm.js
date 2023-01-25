@@ -101,6 +101,10 @@ const updateHandlers = withHandlers({
     path: ['sendAttachments'],
     value
   }),
+  changePseudonymize: ({ updateModel }) => value => updateModel({
+    path: ['pseudonymize'],
+    value
+  }),
   onChangeTimezone: ({ updateModel }) => value => updateModel({
     path: ['timezone'],
     value
@@ -161,6 +165,7 @@ class StatementForwardingForm extends React.Component {
       changeHeaders,
       changeFullDocument,
       changeSendAttachments,
+      changePseudonymize,
       onChangeTimezone,
     } = this.props;
 
@@ -386,8 +391,16 @@ class StatementForwardingForm extends React.Component {
                   label: buildDefaultOptionLabel(orgTimezone),
                   value: orgTimezone,
                 }} />
+            </div> 
+            <div className="form-group">
+              <label htmlFor={`${model.get('_id')}pseudonymize`}>Pseudonymize staments?</label>
+              <span className="help-block">Should the statements be pseudonymized before being sent?</span>
+              <Switch
+                id={`${model.get('_id')}pseudonymize`}
+                label="Pseudonymize"
+                onChange={changePseudonymize}
+                checked={model.get('pseudonymize', false)} />
             </div>
-
             <div className="form-group">
               <QueryBuilder
                 timezone={model.get('timezone', null)}

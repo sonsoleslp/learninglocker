@@ -16,6 +16,7 @@ import {
 } from 'lib/constants/statements';
 import * as Queue from 'lib/services/queue';
 import getStatementsRepo from './getStatementsRepo';
+import pseudonymizeXAPIStatement from './statementAnonymization.js';
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -99,13 +100,17 @@ const statementForwardingRequestHandler = async (
       statementForwarding._id
     );
 
+    const statementPseudo = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(statement) : statement;
+    logger.debug("Attempting to send the following statement: ");
+    logger.debug(JSON.stringify(statementPseudo, null, 4));
+
     await sendRequest(
-      statementForwarding.fullDocument ? statement : statement.statement,
+      statementForwarding.fullDocument ? statementPseudo : statementPseudo.statement,
       statementForwarding,
-      statement
+      statementPseudo
     );
 
-    await setCompleteStatements(statement, statementForwarding._id);
+    await setCompleteStatements(statementPseudo, statementForwarding._id);
 
     logger.debug(
       `SUCCESS sending statement ${statement._id} to ${statementForwarding.configuration.url}`
@@ -140,8 +145,8 @@ const statementForwardingRequestHandler = async (
         }
       );
 
-      const updatedStatement = await Statement.findOne({ _id: statement._id });
-
+      let updatedStatement = await Statement.findOne({ _id: statement._id });
+      updatedStatement = statementForwarding.pseudonymize ? pseudonymizeXAPIStatement(updatedStatement) : updatedStatement;
       if (
         updatedStatement.failedForwardingLog.length <=
         statementForwarding.configuration.maxRetries

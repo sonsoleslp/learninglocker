@@ -14,6 +14,8 @@ import parseQuery from 'lib/helpers/parseQuery';
 
 const objectId = mongoose.Types.ObjectId;
 
+
+
 export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, done, {
   queue = Queue
 } = {}) =>
@@ -34,6 +36,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
           tokenId: statement.organisation
         }
       };
+
       const parsedQuery = await parseQuery(query, { authInfo });
 
       return new Promise((resolve, reject) => {
@@ -41,7 +44,7 @@ export default wrapHandlerForStatement(STATEMENT_FORWARDING_QUEUE, (statement, d
         if (theParsedQuery && !mongoFilteringInMemory(theParsedQuery)(statement)) {
           return resolve();
         }
-
+        
         queue.publish({
           queueName,
           payload: {
