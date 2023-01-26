@@ -3,6 +3,11 @@ import firstValuesOf from "ui/utils/visualisations/helpers/firstValuesOf";
 // Combination: A/B J E.
 export default ({ projections = {} }) => [
   {
+    "$sort":{
+       "timestamp":1
+    }
+  }, 
+  {
     $group: {
       _id: "$group",
       timestamps: {
@@ -14,103 +19,104 @@ export default ({ projections = {} }) => [
     },
   },
   {
-    $unwind: "$timestamps",
-  },
-  {
-    $sort: {
-      timestamps: 1,
-    },
-  },
-  {
-    $group: {
-      _id: "$_id",
-      timestamps: {
-        $push: "$timestamps",
-      },
-      ...firstValuesOf(projections),
-    },
-  },
-  {
     $addFields: {
-      count: {
-        $sum: {
-          $reduce: {
-            input: {
-              $range: [
-                1,
-                {
-                  $size: "$timestamps",
-                },
-              ],
+      "count":{
+         "$let":{
+            "vars":{
+               "timespent":{
+                  "$sum":{
+                     "$reduce":{
+                        "input":{
+                           "$range":[
+                              1,
+                              {
+                                 "$size":"$timestamps"
+                              }
+                           ]
+                        },
+                        "initialValue":[
+                           
+                        ],
+                        "in":{
+                           "$concatArrays":[
+                              "$$value",
+                              [
+                                 {
+                                    "$let":{
+                                       "vars":{
+                                          "spent":{
+                                             "$divide":[
+                                                {
+                                                   "$subtract":[
+                                                      {
+                                                         "$arrayElemAt":[
+                                                            "$timestamps",
+                                                            "$$this"
+                                                         ]
+                                                      },
+                                                      {
+                                                         "$arrayElemAt":[
+                                                            "$timestamps",
+                                                            {
+                                                               "$subtract":[
+                                                                  "$$this",
+                                                                  1
+                                                               ]
+                                                            }
+                                                         ]
+                                                      }
+                                                   ]
+                                                },
+                                                60000
+                                             ]
+                                          }
+                                       },
+                                       "in":{
+                                          "$cond":{
+                                             "if":{
+                                                "$gte":[
+                                                   "$$spent",
+                                                   150
+                                                ]
+                                             },
+                                             "then":0,
+                                             "else":"$$spent"
+                                          }
+                                       }
+                                    }
+                                 }
+                              ]
+                           ]
+                        }
+                     }
+                  }
+               }
             },
-            initialValue: [],
-            in: {
-              $concatArrays: [
-                "$$value",
-                [
+            "in":{
+               "$cond":[
                   {
-                    $let: {
-                      vars: {
-                        spent: {
-                          $divide: [
-                            {
-                              $subtract: [
-                                {
-                                  $arrayElemAt: [
-                                    "$timestamps",
-                                    {
-                                      $add: ["$$this", 1],
-                                    },
-                                  ],
-                                },
-                                {
-                                  $arrayElemAt: ["$timestamps", "$$this"],
-                                },
-                              ],
-                            },
-                            60000,
-                          ],
+                     "$gte":[
+                        {
+                           "$subtract":[
+                              "$$timespent",
+                              {
+                                 "$floor":"$$timespent"
+                              }
+                           ]
                         },
-                      },
-                      in: {
-                        $cond: {
-                          if: {
-                            $gte: ["$$spent", 150],
-                          },
-                          then: 0,
-                          else: {
-                            $cond: [
-                              {
-                                $gte: [
-                                  {
-                                    $subtract: [
-                                      "$$spent",
-                                      {
-                                        $floor: "$$spent",
-                                      },
-                                    ],
-                                  },
-                                  0.5,
-                                ],
-                              },
-                              {
-                                $ceil: "$$spent",
-                              },
-                              {
-                                $floor: "$$spent",
-                              },
-                            ],
-                          },
-                        },
-                      },
-                    },
+                        0.5
+                     ]
                   },
-                ],
-              ],
-            },
-          },
-        },
-      },
-    },
+                  {
+                     "$ceil":"$$timespent"
+                  },
+                  {
+                     "$floor":"$$timespent"
+                  }
+               ]
+            }
+         }
+      }
+   },
   },
 ];

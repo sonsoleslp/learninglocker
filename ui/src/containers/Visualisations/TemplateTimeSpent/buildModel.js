@@ -14,7 +14,7 @@ const buildModel = model =>
     .set('axesgroup', new Map({ optionKey: 'people', searchString: 'Person' }))
     .set('axesoperator', 'timeSpent')
     .set('axesvalue', new Map({ optionKey: 'statements', searchString: 'Statements' }))
-    .set('axesxLabel', 'Time spent')
+    .set('axesxLabel', 'Time spent (in minutes)')
     .set('axesyLabel', 'Person')
     .set('previewPeriod', LAST_2_MONTHS);
 
