@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
+import DeleteButton from 'ui/containers/DeleteButton';
 
 const schema = 'lrs';
 
@@ -47,6 +48,9 @@ class StoreForm extends Component {
               placeholder="A short description of this LRS' purpose"
               value={model.get('description', '')}
               onChange={this.onChangeAttr.bind(null, 'description')} />
+          </div>
+          <div>
+          <ResetButton id={model.get('_id')} schema="store" title={model.get('title', '')} />
           </div>
         </div>
       </div>

@@ -111,8 +111,14 @@ const terminateAllBatchDeletes = catchErrors(async (req, res) => {
   res.status(204).send();
 });
 
+const resetStore = catchErrors(async (req, res) => {
+  console.log("DELETE");
+  res.status(204).send();
+});
+
 export default {
   initialiseBatchDelete,
   terminateBatchDelete,
-  terminateAllBatchDeletes
+  terminateAllBatchDeletes,
+  resetStore
 };

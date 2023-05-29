@@ -272,6 +272,17 @@ class _LLApiClient {
     },
     body: values,
   });
+
+  resetStore = ({
+    storeId
+  }) => post({
+    url: formatUrl(routes.RESET_STORE),
+    headers: {
+      Authorization: `Bearer ${this.getToken()}`
+    },
+  });
+
+
 }
 
 const LLApiClient = _LLApiClient;

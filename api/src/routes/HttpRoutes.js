@@ -292,6 +292,12 @@ router.post(
   BatchDeleteController.terminateBatchDelete
 );
 
+router.post(
+  routes.RESET_STORE,
+  passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
+  BatchDeleteController.resetStore
+);
+
 /**
  * V1 compatability
  */

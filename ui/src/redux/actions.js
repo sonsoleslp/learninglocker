@@ -5,6 +5,7 @@ export {
   addModel,
   saveModel,
   deleteModel,
+  resetModel,
   expandModel,
   modelsWorker,
   fetchModel,

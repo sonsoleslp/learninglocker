@@ -4,6 +4,7 @@ import { handleActions } from 'redux-actions';
 import * as addModelDuck from 'ui/redux/modules/models/addModel';
 import * as updateModelDuck from 'ui/redux/modules/models/updateModel';
 import * as deleteModelDuck from 'ui/redux/modules/models/deleteModel';
+import * as resetModelDuck from 'ui/redux/modules/models/resetModel';
 import * as saveModelDuck from 'ui/redux/modules/models/saveModel';
 import * as fetchModelDuck from 'ui/redux/modules/models/fetchModel';
 import * as mergeEntitiesDuck from 'ui/redux/modules/models/mergeEntities';
@@ -19,6 +20,7 @@ import { IN_PROGRESS, COMPLETED, FAILED } from 'ui/utils/constants';
 
 export const MERGE_ENTITIES = mergeEntitiesDuck.constants.MERGE_ENTITIES;
 export const DELETE_MODEL_SUCCESS = deleteModelDuck.constants.SUCCESS;
+export const RESET_MODEL_SUCCESS = resetModelDuck.constants.SUCCESS;
 export const MODELS_WORKER = 'learninglocker/models/learninglocker/models/MODELS_WORKER';
 export const EXPAND_MODEL = 'learninglocker/models/EXPAND_MODEL';
 export const MERGE_PERSONA_START = 'learninglocker/mergepersona/MERGE_PERSONA_START';
@@ -44,6 +46,7 @@ export const ADD_MODEL_FAILURE = addModelDuck.constants.FAILURE;
 const handler = handleActions({
   ...addModelDuck.reducers,
   ...deleteModelDuck.reducers,
+  ...resetModelDuck.reducers,
   ...saveModelDuck.reducers,
   ...autoSaveModelDuck.reducers,
   ...fetchModelDuck.reducers,
@@ -126,6 +129,8 @@ export entityReviver from 'ui/redux/modules/models/entityReviver';
 export const addModel = addModelDuck.actions.start;
 export const deleteModel = deleteModelDuck.actions.start;
 export const deleteModelSuccess = deleteModelDuck.actions.success;
+export const resetModel = resetModelDuck.actions.start;
+export const resetModelSuccess = resetModelDuck.actions.success;
 export const saveModel = saveModelDuck.actions.start;
 export const fetchModel = fetchModelDuck.actions.start;
 export const updateModel = updateModelDuck.actions.updateModel;
@@ -199,6 +204,7 @@ function* watchWorkerModelSaga() {
 export const sagas = [
   ...addModelDuck.sagas,
   ...deleteModelDuck.sagas,
+  ...resetModelDuck.sagas,
   ...saveModelDuck.sagas,
   ...fetchModelDuck.sagas,
   ...updateModelDuck.sagas,
