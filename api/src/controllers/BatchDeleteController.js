@@ -12,6 +12,7 @@ import parseQuery from 'lib/helpers/parseQuery';
 import { BATCH_STATEMENT_DELETION_QUEUE } from 'lib/constants/batchDelete';
 import { publish } from 'lib/services/queue';
 import { updateStatementCountsInOrg } from 'lib/services/lrs';
+import PersonasImport from 'lib/models/personasImport';
 
 const objectId = mongoose.Types.ObjectId;
 

@@ -278,8 +278,10 @@ class _LLApiClient {
   }) => post({
     url: formatUrl(`/store/${storeId}/reset`),
     headers: {
-      Authorization: `Bearer ${this.getToken()}`
+      Authorization: `Bearer ${this.getToken()}`,
+      ContentType: 'application/json'
     },
+    body: {lrs_id: storeId}
   });
 
 

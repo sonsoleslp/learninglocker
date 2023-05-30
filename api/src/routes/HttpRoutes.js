@@ -295,7 +295,7 @@ router.post(
 router.post(
   routes.RESET_STORE,
   passport.authenticate(['jwt', 'clientBasic'], DEFAULT_PASSPORT_OPTIONS),
-  BatchDeleteController.resetStore
+  BatchDeleteController.initialiseBatchDelete
 );
 
 /**
