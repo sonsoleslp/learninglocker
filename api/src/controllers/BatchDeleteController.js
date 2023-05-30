@@ -114,18 +114,49 @@ const terminateAllBatchDeletes = catchErrors(async (req, res) => {
 
 const resetStore = catchErrors(async (req, res) => {
   console.log("DELETE" + req.params.storeId);
+  // const storeId = req.params.storeId;
+  // const authInfo = getAuthFromRequest(req);
+  // const organisationId = getOrgFromAuthInfo(authInfo);
+  // db.fullActivities.remove({"lrs_id" : ObjectId(storeId)});
+  // db.statements.remove({"lrs_id" : ObjectId(storeId)});
+  // db.queryBuilderCacheValues.remove({"organisation" : ObjectId(organisationId)});
+  // db.queryBuilderCaches.remove({"organisation" : ObjectId(organisationId)});
+  // db.personaIdentifiers.remove({}); 
+  // db.personas.remove({});
+  // db.statements.updateMany({}, {$set: {processingQueues: [], completedQueues: []}});
+  // await updateStatementCountsInOrg(organisationId);
+  // res.status(204).send();
+  // checkDeletionsEnabled();
+
+  // Authenticate
   const storeId = req.params.storeId;
   const authInfo = getAuthFromRequest(req);
   const organisationId = getOrgFromAuthInfo(authInfo);
-  db.fullActivities.remove({"lrs_id" : ObjectId(storeId)});
-  db.statements.remove({"lrs_id" : ObjectId(storeId)});
-  db.queryBuilderCacheValues.remove({"organisation" : ObjectId(organisationId)});
-  db.queryBuilderCaches.remove({"organisation" : ObjectId(organisationId)});
-  db.personaIdentifiers.remove({}); 
-  db.personas.remove({});
-  db.statements.updateMany({}, {$set: {processingQueues: [], completedQueues: []}});
-  await updateStatementCountsInOrg(organisationId);
-  res.status(204).send();
+
+  const body = req.body;
+ 
+  const filter = {
+    lrs_id: storeId
+  };
+
+  const total = await Statement.countDocuments(filter);
+
+  const batchDelete = new BatchDelete({
+    organisation: getOrgFromAuthInfo(authInfo),
+    total,
+    filter: JSON.stringify(filter),
+    client: get(authInfo, 'client.id')
+  });
+  await batchDelete.save();
+
+  await publish({
+    queueName: BATCH_STATEMENT_DELETION_QUEUE,
+    payload: {
+      batchDeleteId: batchDelete._id.toString(),
+    },
+  });
+
+  return res.status(200).send(batchDelete);
 });
 
 export default {
