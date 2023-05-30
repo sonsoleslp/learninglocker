@@ -113,6 +113,16 @@ const terminateAllBatchDeletes = catchErrors(async (req, res) => {
 
 const resetStore = catchErrors(async (req, res) => {
   console.log("DELETE" + req.params.storeId);
+  const storeId = req.params.storeId;
+  const organisationId = getOrgFromAuthInfo(authInfo);
+  db.fullActivities.remove({"lrs_id" : ObjectId(storeId)});
+  db.statements.remove({"lrs_id" : ObjectId(storeId)});
+  db.queryBuilderCacheValues.remove({"organisation" : ObjectId(organisationId)});
+  db.queryBuilderCaches.remove({"organisation" : ObjectId(organisationId)});
+  db.personaIdentifiers.remove({}); 
+  db.personas.remove({});
+  db.statements.updateMany({}, {$set: {processingQueues: [], completedQueues: []}});
+  await updateStatementCountsInOrg(organisationId);
   res.status(204).send();
 });
 
