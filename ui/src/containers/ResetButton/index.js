@@ -106,9 +106,9 @@ class ResetButton extends Component {
             className={classes}
             title="Reset"
             onClick={this.openModal.bind(null)}
-            style={{ width }}
             disabled={this.props.disabled}>
-            <i className="icon ion-refresh-circle-outline" />
+            Reset
+             <i className="icon ion-ios-rewind" />
             {modal}
           </button>
         )

@@ -276,7 +276,7 @@ class _LLApiClient {
   resetStore = ({
     storeId
   }) => post({
-    url: formatUrl(routes.RESET_STORE),
+    url: formatUrl(`/store/${storeId}/reset`),
     headers: {
       Authorization: `Bearer ${this.getToken()}`
     },

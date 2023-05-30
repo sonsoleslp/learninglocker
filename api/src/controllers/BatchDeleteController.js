@@ -112,7 +112,7 @@ const terminateAllBatchDeletes = catchErrors(async (req, res) => {
 });
 
 const resetStore = catchErrors(async (req, res) => {
-  console.log("DELETE");
+  console.log("DELETE" + req.params.storeId);
   res.status(204).send();
 });
 
