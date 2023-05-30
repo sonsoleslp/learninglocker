@@ -114,6 +114,7 @@ const terminateAllBatchDeletes = catchErrors(async (req, res) => {
 const resetStore = catchErrors(async (req, res) => {
   console.log("DELETE" + req.params.storeId);
   const storeId = req.params.storeId;
+  const authInfo = getAuthFromRequest(req);
   const organisationId = getOrgFromAuthInfo(authInfo);
   db.fullActivities.remove({"lrs_id" : ObjectId(storeId)});
   db.statements.remove({"lrs_id" : ObjectId(storeId)});
