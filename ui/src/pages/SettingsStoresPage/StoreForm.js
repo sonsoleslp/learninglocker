@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 import { updateModel } from 'ui/redux/modules/models';
 import { connect } from 'react-redux';
 import DeleteButton from 'ui/containers/DeleteButton';
+import ResetButton from 'ui/containers/ResetButton';
 
 const schema = 'lrs';
 
